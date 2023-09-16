@@ -15,7 +15,7 @@ test('Throw error if validation failed when creating user without phone number',
         delete dbfixture.users.testuser.phoneNumber
         await dbclient.userdb.createNewUser(dbfixture.users.testuser)
     }catch(e){
-        expect(e).toEqual('Phone number cannot be empty')
+        expect(e.message).toEqual('Phone number cannot be empty')
     }
 })
 
@@ -24,7 +24,7 @@ test('Throw error if validation failed when creating user without valid email', 
         dbfixture.users.testuser.email = 'test'
         await dbclient.userdb.createNewUser(dbfixture.users.testuser)
     }catch(e){
-        expect(e).toEqual('Enter a valid Email address')
+        expect(e.message).toEqual('Enter a valid Email address')
     }
 })
 
@@ -33,7 +33,7 @@ test('Find and return a valid User',async()=>{
         const user = await dbclient.userdb.getUser(dbfixture.users.testuser_2._id)
         expect(user.phoneNumber).toEqual(dbfixture.users.testuser_2.phoneNumber)
     }catch(e){
-        expect(e).toEqual('User not found')
+        expect(e.message).toEqual('User not found')
     }
 })
 
@@ -42,7 +42,7 @@ test('Throw Error if no user found for the given id', async()=>{
         const user = await dbclient.userdb.getUser('')
         expect(user.phoneNumber).toEqual(dbfixture.users.testuser_2.phoneNumber)
     }catch(e){
-        expect(e).toEqual('User not found')
+        expect(e.message).toEqual('Invalid user Id')
     }
 })
 
@@ -55,7 +55,7 @@ test('Update existing user', async()=>{
         const newUser = await dbclient.userdb.updateUser(user)
         expect(newUser.fullname).toEqual(user.fullname)
     }catch(e){
-        expect(e).toEqual('User not found')
+        expect(e.message).toEqual('User not found')
     }
 })
 
@@ -66,7 +66,7 @@ test('Updating user with invalid email throws error', async()=>{
         user.email = 'raaja'
         await dbclient.userdb.updateUser(user)
     }catch(e){
-        expect(e).toEqual('Enter a valid Email address')
+        expect(e.message).toEqual('Enter a valid Email address')
     }
 })
 
@@ -77,6 +77,6 @@ test('Updating User without email throws error', async()=>{
         user.email = ''
         await dbclient.userdb.updateUser(user)
     }catch(e){
-        expect(e).toEqual('Email cannot be empty')
+        expect(e.message).toEqual('Email cannot be empty')
     }
 })

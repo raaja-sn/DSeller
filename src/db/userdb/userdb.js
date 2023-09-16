@@ -1,6 +1,7 @@
 
 const User = require('./user')
-const dbUtils = require('../dbutils/dbuitls')
+const dbUtils = require('../dbutils/dbUtils')
+const { default: mongoose } = require('mongoose')
 
 /**
  * Create a new user in Users Collection
@@ -28,6 +29,12 @@ const createNewUser = async (user)=>{
  */
 const getUser = async(userId)=>{
     try{
+        if(!mongoose.isValidObjectId(userId)){
+            throw({
+                name:dbUtils.customErrorTag,
+                message:'Invalid user Id'
+            })
+        }
         const user = await new User().findAUser(userId)
         if(!user) throw('User not found')
         return user

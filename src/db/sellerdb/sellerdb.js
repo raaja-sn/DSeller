@@ -1,5 +1,6 @@
 const Seller = require('./seller')
 const dbUtils = require('../dbutils/dbUtils')
+const { default: mongoose } = require('mongoose')
 
 /**
  * Create a new Seller
@@ -27,6 +28,12 @@ const createNewSeller = async(seller)=>{
  */
 const getSeller = async(sellerId)=>{
     try{
+        if(!mongoose.isValidObjectId(sellerId)){
+            throw({
+                name:dbUtils.customErrorTag,
+                message:'Invalid seller Id'
+            })
+        }
         const seller = await new Seller().findASeller(sellerId)
         if(!seller) throw('Seller not found')
         return seller

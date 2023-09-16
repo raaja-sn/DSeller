@@ -21,7 +21,7 @@ test('Throw error when email is empty', async()=>{
         delete seller.email
         await dbClient.sellerdb.createNewSeller(seller)
     }catch(e){
-        expect(e).toEqual('Email cannot be empty')
+        expect(e.message).toEqual('Email cannot be empty')
     }
 })
 
@@ -31,7 +31,7 @@ test('Throw error when email validation failed', async()=>{
         seller.email = 'Raaja'
         await dbClient.sellerdb.createNewSeller(seller)
     }catch(e){
-        expect(e).toEqual('Enter a valid Email address')
+        expect(e.message).toEqual('Enter a valid Email address')
     }
 })
 
@@ -41,7 +41,7 @@ test('Throw error when phone number is empty', async()=>{
         delete seller.phoneNumber
         await dbClient.sellerdb.createNewSeller(seller)
     }catch(e){
-        expect(e).toEqual('Phone number cannot be empty')
+        expect(e.message).toEqual('Phone number cannot be empty')
     }
 })
 
@@ -51,7 +51,7 @@ test('Throw error when phone number validation failed', async()=>{
         seller.phoneNumber = 'dsfsdf'
         await dbClient.sellerdb.createNewSeller(seller)
     }catch(e){
-        expect(e).toEqual('Invalid mobile number')
+        expect(e.message).toEqual('Invalid mobile number')
     }
 })
 
@@ -64,7 +64,7 @@ test('when no seller is found throw error', async()=>{
     try{
         await dbClient.sellerdb.getSeller('sdfsd')
     }catch(e){
-        expect(e).toBe('Seller not found')
+        expect(e.message).toBe('Invalid seller Id')
     }
 })
 
@@ -83,7 +83,7 @@ test('Updating a seller without email throws error', async()=>{
         newSeller.email = ''
         const seller = await dbClient.sellerdb.updateSeller(newSeller)
     } catch (e) {
-        expect(e).toEqual('Email cannot be empty')
+        expect(e.message).toEqual('Email cannot be empty')
     }
 })
 
@@ -94,7 +94,7 @@ test('Updating a seller with invalid email throws error', async()=>{
         newSeller.email = 'raaja'
         const seller = await dbClient.sellerdb.updateSeller(newSeller)
     } catch (e) {
-        expect(e).toEqual('Enter a valid Email address')
+        expect(e.message).toEqual('Enter a valid Email address')
     }
 })
 
