@@ -51,6 +51,12 @@ const getUser = async(userId)=>{
  */
 const updateUser = async(newUserData) =>{
     try{
+        if(!mongoose.isValidObjectId(newUserData._id)){
+            throw({
+                name:dbUtils.customErrorTag,
+                message:'Invalid user Id'
+            })
+        }
         return await User.findOneAndUpdate({_id:newUserData._id},newUserData,{new:true,runValidators:true})
     }catch(e){
         throw(dbUtils.getErrorMessage(e))

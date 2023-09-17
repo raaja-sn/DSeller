@@ -1,5 +1,11 @@
+const mongoose = require('mongoose')
 const Product = require('./product')
 const dbUtils = require('../dbutils/dbUtils')
+
+const getInvalidObjectIdException = {
+    name:dbUtils.customErrorTag,
+    message:'Product Id is invalid'
+}
 
 /**
  * Create a new product
@@ -22,6 +28,7 @@ const createNewProduct = async(product)=>{
  */
 const updateProduct = async(product) =>{
     try{
+        if(!mongoose.isValidObjectId(product._id)) throw(getInvalidObjectIdException)
         return await Product.findByIdAndUpdate({_id:product._id},product,{new:true,runValidators:true})
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
@@ -35,6 +42,7 @@ const updateProduct = async(product) =>{
  */
 const getExistingProduct = async(productId) =>{
     try{
+        if(!mongoose.isValidObjectId(productId)) throw(getInvalidObjectIdException)
         return await new Product().findProduct(productId)
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
@@ -48,6 +56,7 @@ const getExistingProduct = async(productId) =>{
  */
 const deleteProduct = async(productId) =>{
     try{
+        if(!mongoose.isValidObjectId(productId)) throw(getInvalidObjectIdException)
         const modified = await new Product().deleteProduct(productId)
         if(modified < 1){
             throw('Unable to delete product')
@@ -68,8 +77,8 @@ const deleteProduct = async(productId) =>{
 const getProducts = async(filter, pageNumber, pageSize) =>{
     try{
         if(pageNumber < 1) return []
-        if(pagesize <1 || pageSize >100) return []
-        return await new Product().searchProducts(filter,pageNumber,pageSize)
+        if(pageSize <1 || pageSize >100) return []
+        return await new Product().paginateProducts(filter,pageNumber,pageSize)
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
     }

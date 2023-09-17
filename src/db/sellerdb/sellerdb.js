@@ -49,6 +49,12 @@ const getSeller = async(sellerId)=>{
  */
 const updateSeller = async(newSellerData)=>{
     try{
+        if(!mongoose.isValidObjectId(newSellerData._id)){
+            throw({
+                name:dbUtils.customErrorTag,
+                message:'Invalid seller Id'
+            })
+        }
         return await Seller.findByIdAndUpdate(newSellerData._id,newSellerData,{new:true, runValidators:true})
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
