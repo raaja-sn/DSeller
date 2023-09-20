@@ -8,6 +8,12 @@ const getErrorObject = (code,message)=>{
 
 const customErrorTag = 'CustomError'
 
+/**
+ * Parse the Mongoose error
+ * @param {Error} e The error object to parse
+ * @param {*} model The mongoose model which throws the error
+ * @returns The object with error code and error message 
+ */
 const getErrorMessage = (e,model)=>{
     if(e.name === 'MongoServerError'){
         if(e.code == 11000){

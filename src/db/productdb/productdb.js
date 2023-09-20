@@ -70,7 +70,7 @@ const deleteProduct = async(productId) =>{
 /**
  * Get a list of products matching the filter
  * @param {any} filter Filter to match the product records
- * @param {Number} pageNumber Page number to fetch set of records matching the search term and
+ * @param {Number} pageNumber Page number to fetch set of records matching the filter
  * @param {Number} pageSize Number of records to return per page
  * @returns List of products 
  */

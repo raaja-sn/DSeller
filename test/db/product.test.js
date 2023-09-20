@@ -1,5 +1,5 @@
-const dbclient = require('../../../src/db/dbclient')
-const dbfixtures = require('../../fixtures/dbfixture')
+const dbclient = require('../../src/db/dbclient')
+const dbfixtures = require('../fixtures/dbfixture')
 
 beforeAll(async()=>{
     dbfixtures.products.productTest_2 = 

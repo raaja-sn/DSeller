@@ -1,5 +1,5 @@
-const dbclient = require('../../../src/db/dbclient')
-const dbfixture = require('../../fixtures/dbfixture')
+const dbclient = require('../../src/db/dbclient')
+const dbfixture = require('../fixtures/dbfixture')
 
 beforeAll(async ()=>{
     dbfixture.users.testuser_2 = await dbfixture.users.setUpDatabase()

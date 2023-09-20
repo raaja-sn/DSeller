@@ -54,7 +54,7 @@ let productTest_2
 const setUpDatabase = async()=>{
     await Product.deleteMany({})   
     for(let i=1; i<=100; i++ ){
-        await new Product(getMockProduct(i)).save()
+       // await new Product(getMockProduct(i)).save()
     }
     return await new Product(mockProduct).save()
 }

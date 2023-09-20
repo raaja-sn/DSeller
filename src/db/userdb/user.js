@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
             message:'Invalid mobile number'
         }
     },
+    invoiceNo:{
+        type:Number,
+        default:0,
+    },
     creation:{
         type:Date
     }
@@ -48,6 +52,11 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.findAUser = function(userId){
     return mongoose.model('User',userSchema).findOne({_id:userId})
 }
+
+userSchema.methods.findAUserWithSession = function(userId,session){
+    return mongoose.model('User',userSchema).findOne({_id:userId}).session(session)
+}
+
 
 const User = mongoose.model('User',userSchema)
 

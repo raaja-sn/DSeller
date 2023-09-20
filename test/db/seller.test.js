@@ -1,5 +1,5 @@
-const dbClient = require('../../../src/db/dbclient')
-const dbfixture = require('../../fixtures//dbfixture')
+const dbClient = require('../../src/db/dbclient')
+const dbfixture = require('../fixtures/dbfixture')
 
 
 beforeAll(async()=>{

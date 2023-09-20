@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Small Ecommerse Backend",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "env-cmd -f ./config/prod.env node ./src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon ./src/index.js",
