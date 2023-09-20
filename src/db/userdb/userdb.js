@@ -45,7 +45,7 @@ const getUser = async(userId)=>{
 
 /**
  * 
- * @param {User} newUserData Object following the same User Schema, including the _id
+ * @param {any} newUserData Object following the same User Schema, including the _id
  * of the user to update
  * @returns Returns the updated User if successful, otherwise throws error 
  */
