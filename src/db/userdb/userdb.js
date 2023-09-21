@@ -36,7 +36,6 @@ const getUser = async(userId)=>{
             })
         }
         const user = await new User().findAUser(userId)
-        if(!user) throw('User not found')
         return user
     }catch(e){
         throw(dbUtils.getErrorMessage(e))

@@ -6,8 +6,8 @@ const getErrorObject = (code,message)=>{
 }
 
 /**
- * Parse the Express error
- * @param {Error} e The error object to parse
+ * Returns an error object for express response
+ * @param {String} message The error message
  * @returns The object with error code and error message 
  */
 const getError = (message)=>{

@@ -1,7 +1,6 @@
 const express = require('express')
 const routeUtils = require('../routeutils/routeutils')
 const dbClient = require('../../db/dbclient')
-const mongoose = require('mongoose')
 
 const userRoute = express.Router()
 
@@ -13,30 +12,25 @@ userRoute.post('/user', async(req,resp)=>{
             phoneNumber:req.query.phoneNumber
         }
         const newUser = await dbClient.userdb.createNewUser(user)
+        if(!newUser) throw(routeUtils.getError('Cannot create user'))
         resp.status(201).send(newUser.getPublicProfile())
     }catch(e){
-        console.log(e)
         sendErrorResponse(e,resp)
     }
 })
 
-userRoute.get('/user/:userId', async(req,resp)=>{
+userRoute.get('/user/:userId?', async(req,resp)=>{
     try{
-        if(!mongoose.isValidObjectId(req.params.userId)){
-            throw(routeUtils.getError('User Id is invalid'))
-        }
         const user = await dbClient.userdb.getUser(req.params.userId)
+        if(!user) throw(routeUtils.getError('User not found'))
         resp.status(200).send(user.getPublicProfile())
     }catch(e){
         sendErrorResponse(e,resp)
     }
 })
 
-userRoute.patch('/user/:userId',async(req,resp)=>{
+userRoute.patch('/user/:userId?',async(req,resp)=>{
     try{
-        if(!mongoose.isValidObjectId(req.params.userId)){
-            throw(routeUtils.getError('User Id is invalid'))
-        }
         const query = req.query
         const user = {_id:req.params.userId}
         if(query.fullname){
@@ -46,6 +40,7 @@ userRoute.patch('/user/:userId',async(req,resp)=>{
             user.email = query.email
         }
         const updateUser = await dbClient.userdb.updateUser(user)
+        if(!updateUser) throw(routeUtils.getError('User not found'))
         resp.status(200).send(updateUser.getPublicProfile())
     }catch(e){
         sendErrorResponse(e,resp)

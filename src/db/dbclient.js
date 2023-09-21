@@ -14,7 +14,6 @@ module.exports = {
     userdb,
     sellerdb,
     productdb,
-    orderdb,
-    connectDB
+    orderdb
 }
 

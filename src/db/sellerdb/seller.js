@@ -51,15 +51,24 @@ sellerSchema.methods.findASeller = function(sellerId){
 
 /**
  * Get list of sellers with pagination.
- * @param {Number} pageNumber 
- * @param {Number} pageSize 
+ * @param {any} filter The filter to match the seller records
+ * @param {Number} pageNumber Page number for the set of records used along with pageSize to skip records
+ * @param {Number} pageSize No of records to return
+ * @param {String} sort The sort string to sort the records returned. 
  * @returns 
  */
-sellerSchema.methods.getSellers = function(pageNumber,pageSize){
-    return mongoose.model('Seller',sellerSchema).find()
+sellerSchema.methods.getSellers = function(filter,pageNumber,pageSize,sort){
+    return mongoose.model('Seller',sellerSchema).find(filter)
     .select('fullname phoneNumber _id')
+    .sort(sort)
     .limit(pageSize)
     .skip((pageNumber-1)*pageSize)
+}
+
+sellerSchema.methods.getPublicProfile = function(){
+    const seller = this.toObject()
+    delete seller.__v
+    return seller
 }
 
 const Seller = mongoose.model('Seller',sellerSchema)
