@@ -1,4 +1,4 @@
-const Product = require('../../../src/db/productdb/product')
+const Product = require('../../../src/product/productdb/product')
 
 const setUpDatabase = async()=>{
     await Product.deleteMany({})

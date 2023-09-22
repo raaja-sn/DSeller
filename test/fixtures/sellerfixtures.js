@@ -1,4 +1,4 @@
-const Seller = require('../../src/db/sellerdb/seller')
+const Seller = require('../../src/seller/sellerdb/seller')
 
 const testseller = {
     fullname:'Seller Test',

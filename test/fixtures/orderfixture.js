@@ -1,6 +1,6 @@
-const Order = require('../../src/db/orderdb/order')
-const Product = require('../../src/db/productdb/product')
-const User = require('../../src/db/userdb/user')
+const Order = require('../../src/order/orderdb/order')
+const Product = require('../../src/product/productdb/product')
+const User = require('../../src/user/userdb/user')
 const dbclient = require('../../src/db/dbclient')
 
 const getTestProducts = (pId)=>{

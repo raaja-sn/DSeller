@@ -1,4 +1,4 @@
-const User = require('../../src/db/userdb/user')
+const User = require('../../src/user/userdb/user')
 
 const testuser = {
     fullname:'Test User',

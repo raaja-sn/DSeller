@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Product = require('./product')
-const dbUtils = require('../dbutils/dbUtils')
+const dbUtils = require('../../db/dbutils/dbUtils')
 
 const getInvalidObjectIdException = {
     name:dbUtils.customErrorTag,

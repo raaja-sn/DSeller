@@ -1,8 +1,8 @@
 const db = require('./db/dbclient')
 const express = require('express')
-const userRoute = require('./routes/user/user_route')
-const sellerRoute = require('./routes/seller/seller_route')
-const productRoute = require('./routes/product/product_route')
+const userRoute = require('./user/user_route')
+const sellerRoute = require('./seller/seller_route')
+const productRoute = require('./product/product_route')
 
 const app = express()
 app.use(express.json())

@@ -1,6 +1,6 @@
 const express = require('express')
-const routeUtils = require('../routeutils/routeutils')
-const dbClient = require('../../db/dbclient')
+const routeUtils = require('../routes/routeutils/routeutils')
+const dbClient = require('../db/dbclient')
 
 const userRoute = express.Router()
 

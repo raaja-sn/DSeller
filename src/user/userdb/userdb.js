@@ -1,6 +1,6 @@
 
 const User = require('./user')
-const dbUtils = require('../dbutils/dbUtils')
+const dbUtils = require('../../db/dbutils/dbUtils')
 const { default: mongoose } = require('mongoose')
 
 /**

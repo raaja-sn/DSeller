@@ -1,5 +1,5 @@
 const Seller = require('./seller')
-const dbUtils = require('../dbutils/dbUtils')
+const dbUtils = require('../../db/dbutils/dbUtils')
 const { default: mongoose } = require('mongoose')
 
 /**

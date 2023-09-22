@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const Order = require('./order')
-const User = require('../userdb/user')
-const Product = require('../productdb/product')
-const dbUtils = require('../dbutils/dbUtils')
+const User = require('../../user/userdb/user')
+const Product = require('../../product/productdb/product')
+const dbUtils = require('../../db/dbutils/dbUtils')
 
 const getInvalidObjectIdException = (model)=>{
     return {

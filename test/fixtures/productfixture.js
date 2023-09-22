@@ -1,5 +1,5 @@
 const dbclient = require('../../src/db/dbclient')
-const Product = require('../../src/db/productdb/product')
+const Product = require('../../src/product/productdb/product')
 
 const productTest = {
     name:'HyperX 3000',
