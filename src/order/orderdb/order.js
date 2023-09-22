@@ -29,11 +29,6 @@ const orderedProductSchema = new mongoose.Schema({
             message:'Quantity is invalid'
         },
         min:[1,'Minimum of 1 quantity is required to place the order']
-    },
-    price:{
-        type:Number,
-        required:[true,'Product price cannot be empty'],
-        min:[1,'Product price cannot be less than 1'],
     }
 })
 
@@ -60,7 +55,7 @@ const orderSchema = new mongoose.Schema({
         default:[],
         validate:{
             validator:function(pArr){
-                return pArr.length > 1
+                return pArr.length > 0
             },
             message:'Atleast one product should be added to the cart to place the order'
         }

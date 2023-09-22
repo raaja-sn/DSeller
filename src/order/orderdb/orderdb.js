@@ -46,6 +46,9 @@ const incrementInvoiceNumber = async(user,session)=>{
 }
 
 const updateProductStocks = async(products,session)=>{
+    const cost = {}
+    let billValue = 0
+    let shippingCost = 0
     for(let p of products){
         const originalProduct = await Product.findById(p.productId).session(session)
         if(!originalProduct){
@@ -60,8 +63,14 @@ const updateProductStocks = async(products,session)=>{
             message: `${originalProduct.name} is less in stock. Available quantity is ${originalProduct.stock }`
         })
         await Product.updateOne({_id:originalProduct._id},{stock:updatedStock}).session(session)
+        billValue += (originalProduct.price * p.quantity)
+        shippingCost += originalProduct.shippingCost
     }
-    return
+    cost.billValue = billValue
+    if(products.length > 0){
+        cost.shippingCost = (shippingCost/products.length)
+    }
+    return cost
 }
 
 /**
@@ -80,7 +89,9 @@ const createNewOrder = async(newOrder)=>{
         
         const user = await getCustomer(newOrder.userId, session)
         newOrder.invoiceNo = getInvoiceNumber(user)
-        await updateProductStocks(newOrder.products,session)
+        const cost = await updateProductStocks(newOrder.products,session)
+        newOrder.billValue = cost.billValue
+        newOrder.shippingCost = cost.shippingCost
         const order = await Order.create([newOrder], {session: session})
         await incrementInvoiceNumber(user)
 
