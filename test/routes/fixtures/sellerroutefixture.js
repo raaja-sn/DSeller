@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const Seller = require('../../../src/db/sellerdb/seller')
 
 const setUpDatabase = async()=>{
