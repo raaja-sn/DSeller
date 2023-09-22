@@ -18,7 +18,12 @@ const getInvalidObjectIdException = (model)=>{
  * @returns The user object for the giver userId
  */
 const getCustomer = async(userId, session)=>{
-    return await new User().findAUserWithSession(userId,session)
+    const user = await new User().findAUserWithSession(userId,session)
+    if(!user)throw({
+        name:dbUtils.customErrorTag,
+        message:'User not found'
+    })
+    return user
 }
 
 /**
@@ -54,7 +59,7 @@ const updateProductStocks = async(products,session)=>{
         if(!originalProduct){
             throw({
                 name: dbUtils.customErrorTag,
-                message: `${p.name} is not found in the inventory`
+                message: `${p.name ? p.name : 'Product'} is not found in the inventory`
             })
         }
         const updatedStock = (originalProduct.stock - p.quantity)
@@ -63,7 +68,8 @@ const updateProductStocks = async(products,session)=>{
             message: `${originalProduct.name} is less in stock. Available quantity is ${originalProduct.stock }`
         })
         await Product.updateOne({_id:originalProduct._id},{stock:updatedStock}).session(session)
-        billValue += (originalProduct.price * p.quantity)
+        p.price = (originalProduct.price * p.quantity)
+        billValue += p.price
         shippingCost += originalProduct.shippingCost
     }
     cost.billValue = billValue
@@ -88,6 +94,10 @@ const createNewOrder = async(newOrder)=>{
         session.startTransaction()
         
         const user = await getCustomer(newOrder.userId, session)
+        if(!newOrder.products) throw({
+            name:dbUtils.customErrorTag,
+            message:'Atleast one product should be added to the cart to place the order'
+        })
         newOrder.invoiceNo = getInvoiceNumber(user)
         const cost = await updateProductStocks(newOrder.products,session)
         newOrder.billValue = cost.billValue
@@ -124,15 +134,16 @@ const findOrder = async(orderId)=>{
  * @param {any} filter Filter to match the orders
  * @param {*} pageNumber Page number to fetch set of records matching the filter
  * @param {*} pagesize Number of records to return per page
+ * @param {String} sort The sort order and fields, matching fields of the schema.
+ * Ex. -creation to sort in descending order with the creation field
  * @returns List of orders
  */
-const listOrders = async(filter,pageNumber,pagesize)=>{
+const listOrders = async(filter,pageNumber,pagesize,sort)=>{
     try{
         if(pageNumber<0) return []
         if(pagesize < 1 || pagesize >100) return []
-        return await new Order().listOrders(filter,pageNumber,pagesize)
+        return await new Order().listOrders(filter,pageNumber,pagesize,sort)
     }catch(e){
-        console.log(e)
         throw(dbUtils.getErrorMessage(e,'Order'))
     }
 }
