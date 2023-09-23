@@ -8,4 +8,5 @@ app.get('/',(res,resp)=>{
 
 app.listen(process.env.PORT,()=>{
     console.log('App Connected')
+    console.log(process.env.PORT)
 })
