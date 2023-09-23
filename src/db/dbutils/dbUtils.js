@@ -15,6 +15,7 @@ const customErrorTag = 'CustomError'
  * @returns The object with error code and error message 
  */
 const getErrorMessage = (e,model)=>{
+    console.log(e.message)
     if(e.name === 'MongoServerError'){
         if(e.code == 11000){
             return getErrorObject(2,`${model} already exists`)
