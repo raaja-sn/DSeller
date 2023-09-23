@@ -6,6 +6,6 @@ app.get('/',(res,resp)=>{
     })
 })
 
-app.listen(process.env.PORT,()=>{
-    console.log(`App Connected - ${process.env.PORT}`)
+app.listen(process.env.PORT || 80,()=>{
+    console.log(`App Connected - ${process.env.PORT || 80}`)
 })
