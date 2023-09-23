@@ -61,7 +61,7 @@ test('List the sellers matching the filter',async()=>{
 })
 
 test('listing a seller with invalid user id should send empty list',async()=>{
-    const resp = await request(app).get(`/listorders/650dda5d4c764391b0b58ec3`).query({
+    const resp = await request(app).get(`/listorders/`).query({
         pageNumber:3,
         pageSize:7
     })    
