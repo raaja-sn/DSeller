@@ -12,7 +12,7 @@ const getDbURL = async()=>{
     try{
         const client = new SSMClient({region:'ap-south-1'})
         const getCommand = new GetParameterCommand({
-            name:'DSeller_DB_Password',
+            Name:'DSeller_DB_Password',
             WithDecryption:true
         })
         const dbPass = await client.send(getCommand)
