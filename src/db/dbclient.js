@@ -10,7 +10,7 @@ const getDbURL = async()=>{
         return process.env.DB_URL
     }
     try{
-        const client = new SSMClient()
+        const client = new SSMClient({region:'ap-south-1'})
         const getCommand = new GetParameterCommand({
             name:'DSeller_DB_Password',
             WithDecryption:true
