@@ -15,8 +15,9 @@ const getDbURL = async()=>{
             Name:'DSeller_DB_Password',
             WithDecryption:true
         })
-        const dbPass = await client.send(getCommand)
-        console.log(dbPass)
+        const parameters = await client.send(getCommand)
+        const dbPass = parameters.Parameter.Value
+        console.log(parameters.Parameter.Value)
         return `mongodb+srv://dellseradmin:${dbPass}@dsellercluster.cwdi2eo.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp`
     }catch(e){
         console.log(e)
