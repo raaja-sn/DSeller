@@ -27,8 +27,11 @@ const getDbURL = async()=>{
 
 const DB_URL = process.env.DB_URL 
 
-const connectDB = async ()=>{
-    await moongose.connect(await getDbURL(),{autoIndex:false,useNewUrlParser:true})
+const connectDB = ()=>{
+    setTimeout(async ()=>{
+        await moongose.connect(await getDbURL(),{autoIndex:false,useNewUrlParser:true})
+        console.log("Connected to DB")
+    },10000)
 }
 
 connectDB()
