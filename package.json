@@ -4,7 +4,7 @@
   "description": "Small Ecommerse Backend",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ecosystem.config.js",
+    "start": "pm2-runtime start ecosystem.config.js",
     "dev": "env-cmd -f ./config/dev.env nodemon ./src/index.js",
     "test": "env-cmd -f ./config/test.env jest --watchAll --runInBand"
   },
