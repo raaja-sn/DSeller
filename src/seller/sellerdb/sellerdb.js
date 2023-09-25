@@ -1,5 +1,5 @@
 const Seller = require('./seller')
-const dbUtils = require('../dbutils/dbUtils')
+const dbUtils = require('../../db/dbutils/dbUtils')
 const { default: mongoose } = require('mongoose')
 
 /**
@@ -34,9 +34,7 @@ const getSeller = async(sellerId)=>{
                 message:'Invalid seller Id'
             })
         }
-        const seller = await new Seller().findASeller(sellerId)
-        if(!seller) throw('Seller not found')
-        return seller
+        return await new Seller().findASeller(sellerId)
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
     }
@@ -64,14 +62,17 @@ const updateSeller = async(newSellerData)=>{
 /**
  * Get a list of Sellers from the pageNumber with the page size. (pageNumber-1)*pageSize
  * is used internally to fetch only the requested page record
+ * @param {any} filter The filter to match the seller records
  * @param {Number} pageNumber Starts with 1
  * @param {Number} pageSize Value from 10 to 100
+ * @param {String} sort The sort order and field matching fields of the schema 
+ * ex. -creation to sort in descending order with the creation field
  */
-const getSellersList = async(pageNumber,pageSize) =>{
+const getSellersList = async(filter,pageNumber,pageSize,sort = 'creation') =>{
     try{
         if(pageNumber <1) return []
-        if(pageSize <10 || pageSize>100) return []
-        return await new Seller().getSellers(pageNumber,pageSize)
+        if(pageSize <1 || pageSize>100) return []
+        return await new Seller().getSellers(filter,pageNumber,pageSize,sort)
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
     }

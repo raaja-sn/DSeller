@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const Order = require('./order')
-const User = require('../userdb/user')
-const Product = require('../productdb/product')
-const dbUtils = require('../dbutils/dbUtils')
+const User = require('../../user/userdb/user')
+const Product = require('../../product/productdb/product')
+const dbUtils = require('../../db/dbutils/dbUtils')
 
 const getInvalidObjectIdException = (model)=>{
     return {
@@ -18,7 +18,12 @@ const getInvalidObjectIdException = (model)=>{
  * @returns The user object for the giver userId
  */
 const getCustomer = async(userId, session)=>{
-    return await new User().findAUserWithSession(userId,session)
+    const user = await new User().findAUserWithSession(userId,session)
+    if(!user)throw({
+        name:dbUtils.customErrorTag,
+        message:'User not found'
+    })
+    return user
 }
 
 /**
@@ -46,12 +51,15 @@ const incrementInvoiceNumber = async(user,session)=>{
 }
 
 const updateProductStocks = async(products,session)=>{
+    const cost = {}
+    let billValue = 0
+    let shippingCost = 0
     for(let p of products){
         const originalProduct = await Product.findById(p.productId).session(session)
         if(!originalProduct){
             throw({
                 name: dbUtils.customErrorTag,
-                message: `${p.name} is not found in the inventory`
+                message: `${p.name ? p.name : 'Product'} is not found in the inventory`
             })
         }
         const updatedStock = (originalProduct.stock - p.quantity)
@@ -60,8 +68,15 @@ const updateProductStocks = async(products,session)=>{
             message: `${originalProduct.name} is less in stock. Available quantity is ${originalProduct.stock }`
         })
         await Product.updateOne({_id:originalProduct._id},{stock:updatedStock}).session(session)
+        p.price = (originalProduct.price * p.quantity)
+        billValue += p.price
+        shippingCost += originalProduct.shippingCost
     }
-    return
+    cost.billValue = billValue
+    if(products.length > 0){
+        cost.shippingCost = (shippingCost/products.length)
+    }
+    return cost
 }
 
 /**
@@ -79,8 +94,14 @@ const createNewOrder = async(newOrder)=>{
         session.startTransaction()
         
         const user = await getCustomer(newOrder.userId, session)
+        if(!newOrder.products) throw({
+            name:dbUtils.customErrorTag,
+            message:'Atleast one product should be added to the cart to place the order'
+        })
         newOrder.invoiceNo = getInvoiceNumber(user)
-        await updateProductStocks(newOrder.products,session)
+        const cost = await updateProductStocks(newOrder.products,session)
+        newOrder.billValue = cost.billValue
+        newOrder.shippingCost = cost.shippingCost
         const order = await Order.create([newOrder], {session: session})
         await incrementInvoiceNumber(user)
 
@@ -113,15 +134,16 @@ const findOrder = async(orderId)=>{
  * @param {any} filter Filter to match the orders
  * @param {*} pageNumber Page number to fetch set of records matching the filter
  * @param {*} pagesize Number of records to return per page
+ * @param {String} sort The sort order and fields, matching fields of the schema.
+ * Ex. -creation to sort in descending order with the creation field
  * @returns List of orders
  */
-const listOrders = async(filter,pageNumber,pagesize)=>{
+const listOrders = async(filter,pageNumber,pagesize,sort)=>{
     try{
         if(pageNumber<0) return []
         if(pagesize < 1 || pagesize >100) return []
-        return await new Order().listOrders(filter,pageNumber,pagesize)
+        return await new Order().listOrders(filter,pageNumber,pagesize,sort)
     }catch(e){
-        console.log(e)
         throw(dbUtils.getErrorMessage(e,'Order'))
     }
 }

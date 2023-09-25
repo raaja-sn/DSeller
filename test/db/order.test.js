@@ -68,5 +68,5 @@ test('should get an order',async()=>{
 
 test('list orders matching the filter',async()=>{
     const orders = await dbclient.orderdb.listOrders({billValue:{$gt:40}},1,10)
-    console.log(orders)
+    //console.log(orders)
 })

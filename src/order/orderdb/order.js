@@ -32,7 +32,6 @@ const orderedProductSchema = new mongoose.Schema({
     },
     price:{
         type:Number,
-        required:[true,'Product price cannot be empty'],
         min:[1,'Product price cannot be less than 1'],
     }
 })
@@ -60,7 +59,7 @@ const orderSchema = new mongoose.Schema({
         default:[],
         validate:{
             validator:function(pArr){
-                return pArr.length > 1
+                return pArr.length > 0
             },
             message:'Atleast one product should be added to the cart to place the order'
         }
@@ -95,12 +94,15 @@ orderSchema.methods.findAnOrder = function(orderId){
  * @param {any} filter Filter to match a list of records
  * @param {Number} pageNumber Page number for the list of records
  * @param {Number} pageSize No of records to return in a single query
+ * @param {String} sort The sort order and fields, matching fields of the schema.
+ * Ex. -creation to sort in descending order with the creation field
  * @returns Promise to resolve the query
  */
-orderSchema.methods.listOrders = function(filter,pageNumber,pageSize){
+orderSchema.methods.listOrders = function(filter,pageNumber,pageSize,sort){
     return mongoose.model('Order',orderSchema)
     .find(filter)
     .select('_id invoiceNo billValue shippingCost purchaseDate')
+    .sort(sort)
     .limit(pageSize)
     .skip((pageNumber-1)*pageSize)
 }

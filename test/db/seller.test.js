@@ -76,6 +76,17 @@ test('Update a seller', async()=>{
     expect(seller.fullname).toBe('Seller test updated')
 })
 
+test('Updating a seller with invalid id thorws error', async()=>{
+    try {
+        const newSeller = JSON.parse(JSON.stringify(dbfixture.sellers.testseller_2))
+        delete newSeller.phoneNumber
+        newSeller._id = ''
+        const seller = await dbClient.sellerdb.updateSeller(newSeller)
+    } catch (e) {
+        expect(e.message).toEqual('Invalid seller Id')
+    }
+})
+
 test('Updating a seller without email throws error', async()=>{
     try {
         const newSeller = JSON.parse(JSON.stringify(dbfixture.sellers.testseller_2))
@@ -99,6 +110,6 @@ test('Updating a seller with invalid email throws error', async()=>{
 })
 
 test('should paginate seller', async()=>{
-    const sList = await dbClient.sellerdb.getSellersList(5,10)
+    const sList = await dbClient.sellerdb.getSellersList({},5,10)
     console.log(sList)
 })

@@ -1,6 +1,6 @@
 
 const User = require('./user')
-const dbUtils = require('../dbutils/dbUtils')
+const dbUtils = require('../../db/dbutils/dbUtils')
 const { default: mongoose } = require('mongoose')
 
 /**
@@ -36,7 +36,6 @@ const getUser = async(userId)=>{
             })
         }
         const user = await new User().findAUser(userId)
-        if(!user) throw('User not found')
         return user
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
@@ -45,7 +44,7 @@ const getUser = async(userId)=>{
 
 /**
  * 
- * @param {User} newUserData Object following the same User Schema, including the _id
+ * @param {any} newUserData Object following the same User Schema, including the _id
  * of the user to update
  * @returns Returns the updated User if successful, otherwise throws error 
  */

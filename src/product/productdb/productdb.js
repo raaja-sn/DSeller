@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Product = require('./product')
-const dbUtils = require('../dbutils/dbUtils')
+const dbUtils = require('../../db/dbutils/dbUtils')
 
 const getInvalidObjectIdException = {
     name:dbUtils.customErrorTag,
@@ -72,13 +72,15 @@ const deleteProduct = async(productId) =>{
  * @param {any} filter Filter to match the product records
  * @param {Number} pageNumber Page number to fetch set of records matching the filter
  * @param {Number} pageSize Number of records to return per page
+ * @param {String} sort The sort order and fields, matching fields of the schema.
+ * Ex. -creation to sort in descending order with the creation field
  * @returns List of products 
  */
-const getProducts = async(filter, pageNumber, pageSize) =>{
+const getProducts = async(filter, pageNumber, pageSize,sort = '-creation') =>{
     try{
         if(pageNumber < 1) return []
         if(pageSize <1 || pageSize >100) return []
-        return await new Product().paginateProducts(filter,pageNumber,pageSize)
+        return await new Product().paginateProducts(filter,pageNumber,pageSize,sort)
     }catch(e){
         throw(dbUtils.getErrorMessage(e))
     }

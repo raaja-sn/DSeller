@@ -57,7 +57,8 @@ const productSchema = new mongoose.Schema({
         min:[0,'Shipping cost cannot be less tha 0']
     },
     creation:{
-        type:Date
+        type:Date,
+        default:Date.now()
     }
 })
 
@@ -84,11 +85,13 @@ productSchema.methods.deleteProduct =  function(productId){
  * @param {any} filter Filter to match records
  * @param {Number} pageNumber Page number to fetch records for specific page. Starts from 1
  * @param {number} pageSize No of records to return per list. Max limit is 100
+ * @param {String} sort The sort string to sort the records returned. 
  * @returns Returns a promise to resolve
  */
-productSchema.methods.paginateProducts = function(filter, pageNumber, pageSize){
+productSchema.methods.paginateProducts = function(filter, pageNumber, pageSize,sort){
     return mongoose.model('Product',productSchema).find(filter)
-    .select('name productPictures price _id')
+    .select('name productPictures category subCategory price _id')
+    .sort(sort)
     .limit(pageSize)
     .skip((pageNumber-1)*pageSize)
 }

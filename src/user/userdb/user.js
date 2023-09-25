@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
     },
     invoiceNo:{
         type:Number,
-        default:0,
+        default:1,
     },
     creation:{
         type:Date
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
 })
 
 /**
- * Mongoose instance method for User Schema
+ * Find a user
  * @param {String} userId User Id of the user to be fetched
  * @returns The user if found or undefined if user cannot be found
  */
@@ -53,10 +53,22 @@ userSchema.methods.findAUser = function(userId){
     return mongoose.model('User',userSchema).findOne({_id:userId})
 }
 
+/**
+ * Find a User withe user ID and the transaction session. Used to get a user in the same running transaction
+ * @param {String} userId Id of the User
+ * @param {mongoose.ClientSession} session Session of the transaction
+ * @returns Promise to resolve
+ */
 userSchema.methods.findAUserWithSession = function(userId,session){
     return mongoose.model('User',userSchema).findOne({_id:userId}).session(session)
 }
 
+userSchema.methods.getPublicProfile = function(){
+    const user = this.toObject()
+    delete user.invoiceNo
+    delete user.__v
+    return user
+}
 
 const User = mongoose.model('User',userSchema)
 
