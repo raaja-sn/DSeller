@@ -91,6 +91,7 @@ productRoute.get('/listproducts',async(req,resp)=>{
                 sort = sort.concat(`${query.sortBy}`)
             }
         }
+        sort = sort.concat(' -_id')
         const productList = await dbClient.productdb.getProducts(filter,query.pageNumber,query.pageSize,sort)
         resp.status(200).send(productList)
     }catch(e){

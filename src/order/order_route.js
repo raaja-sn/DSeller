@@ -34,7 +34,7 @@ orderRoute.get('/listorders/:userId?',async(req,resp)=>{
         const query = req.query
         const filter = {}
         filter.userId = req.params.userId
-        const sort = ''
+        let sort = ''
         if(query.sortBy){
             if(query.sortOrder === 'desc'){
                 sort = sort.concat(`-${query.sortBy}`)
@@ -42,6 +42,7 @@ orderRoute.get('/listorders/:userId?',async(req,resp)=>{
                 sort = sort.concat(`${query.sortBy}`)
             }
         }
+        sort = sort.concat(' -id')
         const orderList = await dbclient.orderdb.listOrders(filter,query.pageNumber,query.pageSize,sort)
         resp.status(200).send(orderList)
     }catch(e){

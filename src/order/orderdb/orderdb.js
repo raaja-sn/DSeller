@@ -138,7 +138,7 @@ const findOrder = async(orderId)=>{
  * Ex. -creation to sort in descending order with the creation field
  * @returns List of orders
  */
-const listOrders = async(filter,pageNumber,pagesize,sort)=>{
+const listOrders = async(filter,pageNumber = 1,pagesize = 10,sort)=>{
     try{
         if(pageNumber<0) return []
         if(pagesize < 1 || pagesize >100) return []

@@ -76,7 +76,7 @@ const deleteProduct = async(productId) =>{
  * Ex. -creation to sort in descending order with the creation field
  * @returns List of products 
  */
-const getProducts = async(filter, pageNumber, pageSize,sort = '-creation') =>{
+const getProducts = async(filter, pageNumber = 1, pageSize = 10,sort = '-creation') =>{
     try{
         if(pageNumber < 1) return []
         if(pageSize <1 || pageSize >100) return []
