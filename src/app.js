@@ -5,8 +5,6 @@ const sellerRoute = require('./seller/seller_route')
 const productRoute = require('./product/product_route')
 const orderRoute = require('./order/order_route')
 const categoryRoute = require('./category/category_route')
-const Product = require('./product/productdb/product')
-const Category = require('./category/categorydb/category')
 
 const app = express()
 app.use(express.json())
@@ -21,7 +19,5 @@ app.get('/',(res,resp)=>{
         message:'Welcome to DSeller'
     })
 })
-
-setUpDatabase()
 
 module.exports = app

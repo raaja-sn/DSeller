@@ -123,7 +123,8 @@ const findOrder = async(orderId)=>{
         if(!mongoose.isValidObjectId(orderId)){
             throw(getInvalidObjectIdException('Order'))
         }
-        return await new Order().findAnOrder(orderId)
+        const result = await new Order().findAnOrder(orderId)
+        return result.getPublicOrder()
     }catch(e){
         throw(dbUtils.getErrorMessage(e,'Order'))
     }
@@ -142,7 +143,13 @@ const listOrders = async(filter,pageNumber = 1,pagesize = 10,sort)=>{
     try{
         if(pageNumber<0) return []
         if(pagesize < 1 || pagesize >100) return []
-        return await new Order().listOrders(filter,pageNumber,pagesize,sort)
+        const result = await new Order().listOrders(filter,pageNumber,pagesize,sort)
+        const modifierResult = []
+        for(let o of result){
+            const k = o.getPublicOrderForList()
+            modifierResult.push(k)
+        }
+        return modifierResult
     }catch(e){
         throw(dbUtils.getErrorMessage(e,'Order'))
     }
