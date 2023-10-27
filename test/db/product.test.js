@@ -82,6 +82,34 @@ test('Update a product with a product ID', async()=>{
     expect(p.price).toBe(168000)
 })
 
+test('Add Product picture to an existing product',async()=>{
+    const product = dbfixtures.products.productTest_2
+    const p = await dbclient.productdb.addProductPicture(product._id,"This is a new url")
+    expect(p.productPictures[0].imgUrl).toEqual('This is a new url')
+})
+
+test('Adding more than 10 pictures should throw exception',async()=>{
+    const product = dbfixtures.products.productTest_2
+    try{
+        for(let i =0; i<10; i++){
+            const p = await dbclient.productdb.addProductPicture(product._id,"This is a new url")
+        }
+    }catch(e){
+        expect(e.message).toEqual('Maximum of 10 pictures can only be uploaded')
+    }
+})
+
+test('Update a product with product picture',async()=>{
+    const product = dbfixtures.products.productTest_2
+    try{
+        const q = await dbclient.productdb.updateProductImage(product._id,"sdfsdfser","Tikka")
+        console.log(q)
+
+    }catch(e){
+        console.log(e)
+    }
+})
+
 test('Updating a product with invalid ID throws error', async()=>{
     try {
         const product = JSON.parse(JSON.stringify(dbfixtures.products.productTest_2))
