@@ -5,7 +5,7 @@ const dbClient = require('../db/dbclient')
 const userRoute = express.Router()
 
 userRoute.post('/user', async(req,resp)=>{
-    console.log(req)
+    console.log(req.body)
     try{
         const user = {
             fullname:req.query.fullname,
