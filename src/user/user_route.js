@@ -5,7 +5,7 @@ const dbClient = require('../db/dbclient')
 const userRoute = express.Router()
 
 userRoute.post('/user', async(req,resp)=>{
-    console.log(req.body)
+    console.log(req.query)
     try{
         const user = {
             fullname:req.query.fullname,
@@ -21,6 +21,7 @@ userRoute.post('/user', async(req,resp)=>{
 })
 
 userRoute.get('/user/:userId?', async(req,resp)=>{
+    console.log(req.params)
     try{
         const user = await dbClient.userdb.getUser(req.params.userId)
         if(!user) throw(routeUtils.getError('User not found'))

@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         index:true,
         validate:{
             validator:function(pNumber){
-                return validator.isMobilePhone(pNumber)
+                return validator.isMobilePhone(pNumber,validator.isMobilePhoneLocales,{strictMode:true})
             },
             message:'Invalid mobile number'
         }
