@@ -74,12 +74,12 @@ productRoute.post('/product/image/:productId?',uploadProductImage.single('produc
 
 productRoute.patch('/product/image/:productId?',uploadProductImage.single('productImage'),async(req,resp) =>{
     try{
-        if(!mongoose.isValidObjectId(req.body.imageId))throw(routeUtils.getError(`Product's Image Id is invalid`))
+        if(!mongoose.isValidObjectId(req.query.imageId))throw(routeUtils.getError(`Product's Image Id is invalid`))
         let imgUrl = ""
         if(req.file){
-            imgUrl = await addToS3(req.file,req.params.productId,req.body.imageId,getImageExtension(req))
+            imgUrl = await addToS3(req.file,req.params.productId,req.query.imageId,getImageExtension(req))
         }
-        const product = await dbClient.productdb.updateProductImage(req.params.productId,req.body.imageId,imgUrl)
+        const product = await dbClient.productdb.updateProductImage(req.params.productId,req.query.imageId,imgUrl)
         if(!product) throw(routeUtils.getError('Invalid Product Id'))
         resp.status(201).send(product)
     }catch(e){
