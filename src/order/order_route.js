@@ -1,6 +1,7 @@
 const express = require('express')
 const dbclient = require('../db/dbclient')
 const routUtils = require('../routes/routeutils/routeutils')
+const { default: mongoose } = require('mongoose')
 
 const orderRoute = express.Router()
 
@@ -32,6 +33,7 @@ orderRoute.get('/order/:orderId?',async(req,resp)=>{
 orderRoute.get('/listorders/:userId?',async(req,resp)=>{
     try{
         const query = req.query
+        if(!mongoose.isValidObjectId(re.params.userId)) throw(routUtils.getError('Invalid user Id'))
         const filter = {}
         filter.userId = req.params.userId
         let sort = ''
