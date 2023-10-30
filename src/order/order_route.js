@@ -34,7 +34,6 @@ orderRoute.get('/listorders/:userId?',async(req,resp)=>{
     try{
         const query = req.query
         if(!mongoose.isValidObjectId(req.params.userId)) throw(routeUtils.getError('Invalid user Id'))
-        console.log(req.params)
         const filter = {}
         filter.userId = req.params.userId
         let sort = ''
