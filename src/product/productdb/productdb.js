@@ -35,6 +35,49 @@ const updateProduct = async(product) =>{
     }
 }
 
+
+/**
+ * Add a product Image for existing product
+ * @param {String} productId The product Id of the product
+ * @param {String} imageUrl The image url to add
+ * @returns The product with image url
+ */
+const addProductPicture = async(productId,imageUrl)=>{
+    try{
+        if(!mongoose.isValidObjectId(productId))throw(getInvalidObjectIdException)
+        const product = await Product.findById(productId)
+        if(!product)throw(getInvalidObjectIdException)
+        if(product.productPictures.length == 10) throw({
+            name:dbUtils.customErrorTag,
+            message:'Maximum of 10 pictures can only be uploaded'
+        })
+        return await Product.findByIdAndUpdate(productId,{
+            $push:{'productPictures':{imgUrl:imageUrl}}
+        },{new:true,runValidators:true})
+    }catch(e){
+        throw(dbUtils.getErrorMessage(e))
+    }
+}
+
+/**
+ * Update an exisiting picture for the product
+ * @param {String} productId The product Id of product
+ * @param {String} imageId The image Id of the image to update in product
+ * @param {String} imageUrl The image url for the image
+ * @returns The updated product
+ */
+const updateProductImage = async(productId,imageId,imageUrl)=>{
+    try{
+        if(!mongoose.isValidObjectId(productId)) throw(getInvalidObjectIdException)
+        if(!mongoose.isValidObjectId(imageId)) throw({name:dbUtils.customErrorTag,message:`Product's Image Id is invalid`})
+        return await Product.findOneAndUpdate({_id:productId,"productPictures._id":imageId},{
+            $set:{ "productPictures.$.imgUrl":imageUrl}
+        },{new:true, runValidators:true})
+    }catch(e){
+        throw(dbUtils.getErrorMessage(e))
+    }
+}
+
 /**
  * Find a product in Products collection
  * @param {String} productId Id of the product to be fetched
@@ -76,7 +119,7 @@ const deleteProduct = async(productId) =>{
  * Ex. -creation to sort in descending order with the creation field
  * @returns List of products 
  */
-const getProducts = async(filter, pageNumber, pageSize,sort = '-creation') =>{
+const getProducts = async(filter, pageNumber = 1, pageSize = 10,sort = '-creation') =>{
     try{
         if(pageNumber < 1) return []
         if(pageSize <1 || pageSize >100) return []
@@ -91,6 +134,8 @@ module.exports = {
     updateProduct,
     deleteProduct,
     getExistingProduct,
-    getProducts
+    getProducts,
+    updateProductImage,
+    addProductPicture
 }
 

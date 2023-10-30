@@ -36,8 +36,8 @@ userRoute.patch('/user/:userId?',async(req,resp)=>{
         if(query.fullname){
             user.fullname = query.fullname
         }
-        if(query.email){
-            user.email = query.email
+        if(query.phoneNumber){
+            user.phoneNumber = query.phoneNumber
         }
         const updateUser = await dbClient.userdb.updateUser(user)
         if(!updateUser) throw(routeUtils.getError('User not found'))

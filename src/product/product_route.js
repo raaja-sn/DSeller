@@ -1,6 +1,9 @@
 const express = require('express')
+const multer = require('multer')
+const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
 const dbClient = require('../db/dbclient')
 const routeUtils = require('../routes/routeutils/routeutils')
+const { default: mongoose } = require('mongoose')
 
 const productRoute = express.Router()
 
@@ -24,6 +27,85 @@ productRoute.post('/product',async(req,resp)=>{
         sendErrorResponse(e,resp)
     }
 })
+
+const addToS3 = async(file,productId,imageName,extension) =>{
+    const client = new S3Client({
+        region: "ap-south-1"
+    })
+    const bucketName = process.env.S3_BUCKET || "dseller"
+    const imageKey = `products/${productId}/${imageName}.${extension}`
+    const uploadImageCommand = new PutObjectCommand({
+        Bucket: bucketName,
+        Key:imageKey,
+        Body: file.buffer
+    })
+    await client.send(uploadImageCommand)
+    return `https://${bucketName}.s3.ap-south-1.amazonaws.com/${imageKey}`
+}
+
+const uploadProductImage = multer({
+     fileFilter(req, productImageFile, cb){
+        if(!productImageFile.originalname.match(/\.(jpg|jpeg|png|webp)$/gi)){
+            return cb(Error('Unsupported image format. Only JPG, JPEG, PNG and WEBP are supported'))
+        }
+        return cb(undefined,true)
+     }
+})
+
+productRoute.post('/product/image/:productId?',uploadProductImage.single('productImage'),async(req,resp) =>{
+    try{
+        let imgUrl = ""
+        const productWithoutImage = await dbClient.productdb.addProductPicture(req.params.productId,"mock")
+        if(!productWithoutImage) throw(routeUtils.getError('Invalid Product Id'))
+        const imageId = productWithoutImage.productPictures[productWithoutImage.productPictures.length-1]._id
+        if(req.file){
+            imgUrl = await addToS3(req.file,req.params.productId,imageId,getImageExtension(req))
+        }
+        const product = await dbClient.productdb.updateProductImage(req.params.productId,imageId,imgUrl)
+        resp.status(201).send(product)
+    }catch(e){
+        sendErrorResponse(e,resp)
+    }
+},(error,req,resp,next)=>{
+    resp.status(400).send({
+        message: error.message
+    })
+})
+
+productRoute.patch('/product/image/:productId?',uploadProductImage.single('productImage'),async(req,resp) =>{
+    try{
+        if(!mongoose.isValidObjectId(req.query.imageId))throw(routeUtils.getError(`Product's Image Id is invalid`))
+        let imgUrl = ""
+        if(req.file){
+            imgUrl = await addToS3(req.file,req.params.productId,req.query.imageId,getImageExtension(req))
+        }
+        const product = await dbClient.productdb.updateProductImage(req.params.productId,req.query.imageId,imgUrl)
+        if(!product) throw(routeUtils.getError('Invalid Product Id'))
+        resp.status(201).send(product)
+    }catch(e){
+        sendErrorResponse(e,resp)
+    }
+},(error,req,resp,next)=>{
+    resp.status(400).send({
+        message: error.message
+    })
+})
+
+
+
+const getImageExtension = (req)=>{
+    let extension = ""
+    if(req.file.originalname.match(/\.jpg$/g)){
+        extension = 'jpg'
+    }else if(req.file.originalname.match(/\.jpeg$/g)){
+        extension = 'jpeg'
+    }else if(req.file.originalname.match(/\.png$/g)){
+        extension = 'png'
+    }else if(req.file.originalname.match(/\.webp$/g)){
+        extension = 'webp'
+    }
+    return extension
+}
 
 productRoute.get('/product/:productId?',async(req,resp)=>{
     try{
@@ -91,6 +173,7 @@ productRoute.get('/listproducts',async(req,resp)=>{
                 sort = sort.concat(`${query.sortBy}`)
             }
         }
+        sort = sort.concat(' -_id')
         const productList = await dbClient.productdb.getProducts(filter,query.pageNumber,query.pageSize,sort)
         resp.status(200).send(productList)
     }catch(e){

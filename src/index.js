@@ -1,6 +1,7 @@
 const app= require('./app')
 
 app.get('/',(res,resp)=>{
+    console.log('Health check done')
     resp.status(200).send({
         message:'Welcome to DSeller'
     })

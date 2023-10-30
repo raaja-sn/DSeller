@@ -100,6 +100,21 @@ test('Update an existing product',async()=>{
     expect(uResp.body.descriptionLong).toBe('Price dropped - Cool Blue T shirt suitable for summers')
 })
 
+test('Update product image for a product',async()=>{
+    const resp = await request(app).post('/product').send({
+        name:'Indian Terrain Tshirt 5555',
+        category:'Clothing',
+        subCategory:'Mens clothing',
+        descriptionLong:'Super cool cotton blue T shirt for summers',
+        productPictures:[{imgId:5,imgUrl:"Some"}],
+        price:1385
+    }).expect(201)
+    const imgResp = await request(app).patch(`/product/${resp.body._id}`).send({
+        $set:{'productPictures.5':"url"}
+    })
+    console.log(imgResp.body)
+})
+
 test('Updating an existing product with invalid product id should send error response',async()=>{
     const uResp = await request(app).patch(`/product/`).send({
         descriptionLong:'Price dropped - Cool Blue T shirt suitable for summers',
@@ -122,7 +137,6 @@ test('Delete an existing product',async()=>{
 
 test('Deleting a product with invalid id should send error response',async()=>{
     const resp = await request(app).delete(`/product/`).expect(400)
-    console.log(resp.body)
     expect(resp.body.message).toEqual('Product Id is invalid')
 })
 

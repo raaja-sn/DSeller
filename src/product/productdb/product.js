@@ -1,5 +1,13 @@
 const  mongoose = require('mongoose')
 
+const imageSchema = new mongoose.Schema({
+    imgUrl:{
+        type:String,
+        required:[true,'Product Image url is required']
+    }
+})
+
+
 /**
  *  Mongoose schema for Products collection
  */
@@ -38,8 +46,14 @@ const productSchema = new mongoose.Schema({
         min:[1,'Price cannot be less tha 1']
     },
     productPictures:{
-        type:[String],
-        default:[]
+        type:[imageSchema],
+        default:[],
+        validate:{
+            validator:(pictures)=>{
+                return pictures.length <= 10
+            },
+            message: 'Maximum of 10 pictures can only be uploaded'
+        }
     },
     stock:{
         type:Number,

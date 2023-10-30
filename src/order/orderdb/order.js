@@ -107,6 +107,29 @@ orderSchema.methods.listOrders = function(filter,pageNumber,pageSize,sort){
     .skip((pageNumber-1)*pageSize)
 }
 
+orderSchema.methods.getPublicOrder = function(){
+    const orderForApiCall = {
+        _id:this._id,
+        invoiceNo: this.invoiceNo,
+        billValue:this.billValue,
+        shippingCost:this.shippingCost,
+        purchaseDate:this.purchaseDate.getTime(),
+        products:this.products
+    }
+    return orderForApiCall
+}
+
+orderSchema.methods.getPublicOrderForList = function(){
+    const orderForApiCall = {
+        _id:this._id,
+        invoiceNo: this.invoiceNo,
+        billValue:this.billValue,
+        shippingCost:this.shippingCost,
+        purchaseDate:this.purchaseDate.getTime()
+    }
+    return orderForApiCall
+}
+
 const Order  = mongoose.model('Order',orderSchema)
 
 module.exports = Order

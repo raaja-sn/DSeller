@@ -1,6 +1,7 @@
 const express = require('express')
 const dbclient = require('../db/dbclient')
-const routUtils = require('../routes/routeutils/routeutils')
+const routeUtils = require('../routes/routeutils/routeutils')
+const { default: mongoose } = require('mongoose')
 
 const orderRoute = express.Router()
 
@@ -12,7 +13,7 @@ orderRoute.post('/order',async(req,resp)=>{
             products:body.products
         }
         const newOrder = await dbclient.orderdb.createNewOrder(order)
-        if(!newOrder[0]) throw(routUtils.getError('Cannot create order'))
+        if(!newOrder[0]) throw(routeUtils.getError('Cannot create order'))
         resp.status(201).send(newOrder[0])
     }catch(e){
         sendErrorResponse(e,resp)
@@ -22,7 +23,7 @@ orderRoute.post('/order',async(req,resp)=>{
 orderRoute.get('/order/:orderId?',async(req,resp)=>{
     try{
         const order = await dbclient.orderdb.findOrder(req.params.orderId)
-        if(!order)throw(routUtils.getError('Order not found'))
+        if(!order)throw(routeUtils.getError('Order not found'))
         resp.status(200).send(order)
     }catch(e){
         sendErrorResponse(e,resp)
@@ -32,9 +33,10 @@ orderRoute.get('/order/:orderId?',async(req,resp)=>{
 orderRoute.get('/listorders/:userId?',async(req,resp)=>{
     try{
         const query = req.query
+        if(!mongoose.isValidObjectId(req.params.userId)) throw(routeUtils.getError('Invalid user Id'))
         const filter = {}
         filter.userId = req.params.userId
-        const sort = ''
+        let sort = ''
         if(query.sortBy){
             if(query.sortOrder === 'desc'){
                 sort = sort.concat(`-${query.sortBy}`)
@@ -42,6 +44,7 @@ orderRoute.get('/listorders/:userId?',async(req,resp)=>{
                 sort = sort.concat(`${query.sortBy}`)
             }
         }
+        sort = sort.concat(' -id')
         const orderList = await dbclient.orderdb.listOrders(filter,query.pageNumber,query.pageSize,sort)
         resp.status(200).send(orderList)
     }catch(e){
